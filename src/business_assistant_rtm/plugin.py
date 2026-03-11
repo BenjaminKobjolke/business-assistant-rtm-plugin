@@ -12,6 +12,7 @@ from rtmilk.authorization import AuthorizationSession
 
 from .config import load_rtm_settings
 from .constants import (
+    PLUGIN_CATEGORY,
     PLUGIN_DATA_RTM_AUTH_SESSION,
     PLUGIN_DATA_RTM_SERVICE,
     PLUGIN_DATA_RTM_SETTINGS,
@@ -178,6 +179,7 @@ def register(registry: PluginRegistry) -> None:
             name=PLUGIN_NAME,
             description=PLUGIN_DESCRIPTION,
             system_prompt_extra=SYSTEM_PROMPT_RTM_SETUP,
+            category=PLUGIN_CATEGORY,
         )
         registry.register(info, tools)
         return
@@ -205,6 +207,7 @@ def register(registry: PluginRegistry) -> None:
         name=PLUGIN_NAME,
         description=PLUGIN_DESCRIPTION,
         system_prompt_extra=SYSTEM_PROMPT_RTM,
+        category=PLUGIN_CATEGORY,
     )
 
     registry.register(info, tools)

@@ -7,8 +7,9 @@ ENV_RTM_API_KEY = "RTM_API_KEY"
 ENV_RTM_SHARED_SECRET = "RTM_SHARED_SECRET"
 ENV_RTM_TOKEN = "RTM_TOKEN"
 
-# Plugin name
+# Plugin name and category
 PLUGIN_NAME = "rtm"
+PLUGIN_CATEGORY = "todo"
 PLUGIN_DESCRIPTION = "Remember The Milk task management"
 
 # Plugin data keys
