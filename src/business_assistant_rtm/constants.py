@@ -53,16 +53,16 @@ max 100, sorted by priority. Pass a custom filter_str to override.
 ## Task CRUD
 - rtm_add_task(name, list_id=None): Add a task (Smart Add supported — \
 "Buy milk ^today #shopping !1")
-- rtm_complete_task(task_id): Mark a task as complete
-- rtm_uncomplete_task(task_id): Mark a task as incomplete
+- rtm_complete_task(task_id, undo=False): Mark a task as complete, \
+or undo completion with undo=True
 - rtm_delete_task(task_id): Delete a task
 
 ## Task Modification
-- rtm_set_due_date(task_id, due): Set/change due date (natural language supported)
-- rtm_set_priority(task_id, priority): Set priority (1=high, 2=medium, 3=low, none)
-- rtm_set_task_name(task_id, name): Rename a task
-- rtm_add_tags(task_id, tags): Add tags to a task (comma-separated)
-- rtm_remove_tags(task_id, tags): Remove tags from a task (comma-separated)
+- rtm_update_task(task_id, due="", priority="", name=""): Update task fields. \
+Only non-empty fields are applied. Can update multiple fields at once. \
+due accepts natural language, priority: 1=high/2=medium/3=low/none.
+- rtm_manage_tags(task_id, tags, action="add"): Manage tags. \
+action: "add" or "remove". tags: comma-separated tag names.
 - rtm_add_note(task_id, title, text): Add a note to a task
 
 ## Formatting — CRITICAL

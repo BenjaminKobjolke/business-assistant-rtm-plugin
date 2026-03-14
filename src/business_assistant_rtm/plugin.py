@@ -64,14 +64,14 @@ def _rtm_add_task(
     return _get_service(ctx).add_task(name=name, list_id=list_id)
 
 
-def _rtm_complete_task(ctx: RunContext[Deps], task_id: str) -> str:
-    """Mark a task as complete."""
-    return _get_service(ctx).complete_task(task_id)
-
-
-def _rtm_uncomplete_task(ctx: RunContext[Deps], task_id: str) -> str:
-    """Mark a task as incomplete."""
-    return _get_service(ctx).uncomplete_task(task_id)
+def _rtm_complete_task(
+    ctx: RunContext[Deps], task_id: str, undo: bool = False
+) -> str:
+    """Mark a task as complete, or undo completion with undo=True."""
+    service = _get_service(ctx)
+    if undo:
+        return service.uncomplete_task(task_id)
+    return service.complete_task(task_id)
 
 
 def _rtm_delete_task(ctx: RunContext[Deps], task_id: str) -> str:
@@ -82,29 +82,38 @@ def _rtm_delete_task(ctx: RunContext[Deps], task_id: str) -> str:
 # --- Task Modification tools ---
 
 
-def _rtm_set_due_date(ctx: RunContext[Deps], task_id: str, due: str) -> str:
-    """Set or change the due date of a task (natural language supported)."""
-    return _get_service(ctx).set_due_date(task_id, due)
+def _rtm_update_task(
+    ctx: RunContext[Deps],
+    task_id: str,
+    due: str = "",
+    priority: str = "",
+    name: str = "",
+) -> str:
+    """Update task fields. Only non-empty fields are updated."""
+    service = _get_service(ctx)
+    results: list[str] = []
+    if due:
+        results.append(service.set_due_date(task_id, due))
+    if priority:
+        results.append(service.set_priority(task_id, priority))
+    if name:
+        results.append(service.set_task_name(task_id, name))
+    if not results:
+        return "No fields to update — provide due, priority, or name."
+    return "\n".join(results)
 
 
-def _rtm_set_priority(ctx: RunContext[Deps], task_id: str, priority: str) -> str:
-    """Set the priority of a task (1=high, 2=medium, 3=low, none)."""
-    return _get_service(ctx).set_priority(task_id, priority)
-
-
-def _rtm_set_task_name(ctx: RunContext[Deps], task_id: str, name: str) -> str:
-    """Rename a task."""
-    return _get_service(ctx).set_task_name(task_id, name)
-
-
-def _rtm_add_tags(ctx: RunContext[Deps], task_id: str, tags: str) -> str:
-    """Add tags to a task (comma-separated)."""
-    return _get_service(ctx).add_tags(task_id, tags)
-
-
-def _rtm_remove_tags(ctx: RunContext[Deps], task_id: str, tags: str) -> str:
-    """Remove tags from a task (comma-separated)."""
-    return _get_service(ctx).remove_tags(task_id, tags)
+def _rtm_manage_tags(
+    ctx: RunContext[Deps],
+    task_id: str,
+    tags: str,
+    action: str = "add",
+) -> str:
+    """Manage task tags. action: add or remove."""
+    service = _get_service(ctx)
+    if action == "remove":
+        return service.remove_tags(task_id, tags)
+    return service.add_tags(task_id, tags)
 
 
 def _rtm_add_note(
@@ -193,13 +202,9 @@ def register(registry: PluginRegistry) -> None:
         Tool(_rtm_list_tags, name="rtm_list_tags"),
         Tool(_rtm_add_task, name="rtm_add_task"),
         Tool(_rtm_complete_task, name="rtm_complete_task"),
-        Tool(_rtm_uncomplete_task, name="rtm_uncomplete_task"),
         Tool(_rtm_delete_task, name="rtm_delete_task"),
-        Tool(_rtm_set_due_date, name="rtm_set_due_date"),
-        Tool(_rtm_set_priority, name="rtm_set_priority"),
-        Tool(_rtm_set_task_name, name="rtm_set_task_name"),
-        Tool(_rtm_add_tags, name="rtm_add_tags"),
-        Tool(_rtm_remove_tags, name="rtm_remove_tags"),
+        Tool(_rtm_update_task, name="rtm_update_task"),
+        Tool(_rtm_manage_tags, name="rtm_manage_tags"),
         Tool(_rtm_add_note, name="rtm_add_note"),
     ]
 

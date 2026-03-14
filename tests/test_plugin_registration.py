@@ -26,7 +26,7 @@ class TestPluginRegistration:
         registry = PluginRegistry()
         register(registry)
 
-        assert len(registry.all_tools()) == 14
+        assert len(registry.all_tools()) == 10
         assert len(registry.plugins) == 1
         assert registry.plugins[0].name == "rtm"
         assert registry.system_prompt_extras() != ""
